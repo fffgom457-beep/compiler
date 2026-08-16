@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AeroCompile</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+:root{
+  --bg:#000;
+  --card:rgba(255,255,255,0.05);
+  --border:rgba(255,255,255,0.08);
+  --text:#fff;
+  --muted:#8e8e93;
+  --blue:#3b82f6;
+  --green:#22c55e;
+  --purple:#a020f0;
+  --gold:#ffd700;
+}
+html,body{
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;
+  overflow-x:hidden;
+}
+.app{max-width:480px;margin:0 auto;padding-bottom:100px}
+
+/* header */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px 8px;
+}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo-mark{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:18px;color:#fff;
+  box-shadow:0 0 20px rgba(59,130,246,0.35);
+}
+.brand-col{display:flex;flex-direction:column;line-height:1.15}
+.brand-name{font-size:17px;font-weight:800;letter-spacing:0.3px}
+.brand-sub{font-size:12px;color:var(--muted);font-weight:500}
+.pill{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;padding:6px 12px;
+  font-size:13px;font-weight:700;color:#fff;
+}
+
+/* hero glow */
+.hero{
+  position:relative;text-align:center;
+  padding:28px 20px 10px;overflow:hidden;
+}
+.glow{
+  position:absolute;top:-40%;left:50%;transform:translateX(-50%);
+  width:420px;height:420px;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(59,130,246,0.18) 0%,transparent 70%);
+}
+.hero-icon{
+  position:relative;z-index:1;
+  width:72px;height:72px;margin:0 auto 14px;
+  border-radius:20px;
+  background:linear-gradient(145deg,#1e3a8a,#312e81);
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;
+  box-shadow:0 10px 40px rgba(59,130,246,0.35);
+  animation:floatY 4s ease-in-out infinite;
+}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero h1{position:relative;z-index:1;font-size:26px;font-weight:800;letter-spacing:-0.4px;margin-bottom:6px}
+.hero p{position:relative;z-index:1;font-size:14px;color:var(--muted);line-height:1.4;padding:0 12px}
+
+/* grid tiles */
+.section{padding:16px 16px 0}
+.label{
+  font-size:12px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:0.06em;
+  margin-bottom:10px;padding-left:4px;
+}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;padding:20px 14px;
+  text-align:center;cursor:pointer;
+  transition:transform .15s,border-color .2s,background .2s;
+}
+.tile:active{transform:scale(0.97)}
+.tile .ico{font-size:28px;margin-bottom:10px;display:block}
+.tile .t{font-size:14px;font-weight:700}
+.tile .s{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
+.tile.blue{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.35)}
+.tile.green{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.35)}
+.tile.purple{background:rgba(160,32,240,0.12);border-color:rgba(160,32,240,0.35)}
+
+/* glass card */
+.card{
+  margin:16px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;padding:16px;
+}
+.input-row{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:16px;padding:8px 12px;
+}
+.input-row:focus-within{
+  border-color:#3b82f6;
+  background:rgba(59,130,246,0.1);
+  box-shadow:0 0 15px rgba(59,130,246,0.2);
+}
+.input-row input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:#fff;font-size:16px;font-weight:600;font-family:inherit;
+}
+.input-row input::placeholder{color:#555;font-weight:500}
+.btn-ok{
+  border:none;border-radius:12px;padding:10px 16px;
+  background:linear-gradient(90deg,#22c55e,#16a34a);
+  color:#fff;font-weight:800;font-size:14px;cursor:pointer;
+  font-family:inherit;
+}
+.btn-ok:active{transform:scale(0.96)}
+.hint{font-size:12px;color:#555;margin-top:10px;line-height:1.4}
+
+.list-btn{
+  width:100%;margin-top:8px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);
+  border-radius:16px;padding:14px 16px;
+  color:#fff;font-size:15px;font-weight:600;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;font-family:inherit;text-align:left;
+}
+.list-btn:active{background:rgba(255,255,255,0.1)}
+.list-btn span{flex:1}
+.list-btn .arrow{color:#555;font-size:18px}
+
+/* mega premium */
+.mega{
+  width:100%;margin-top:8px;height:54px;border:none;border-radius:16px;
+  background:linear-gradient(90deg,#a020f0,#6a0dad);
+  color:#fff;font-weight:800;font-size:16px;
+  box-shadow:0 10px 40px rgba(160,32,240,0.35);
+  cursor:pointer;font-family:inherit;
+}
+.mega:active{transform:scale(0.98)}
+
+/* bottom nav */
+.nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:rgba(0,0,0,0.92);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:1px solid rgba(255,255,255,0.08);
+  padding:8px 12px calc(8px + env(safe-area-inset-bottom));
+  display:flex;justify-content:space-around;max-width:480px;margin:0 auto;
+}
+.nav-item{
+  flex:1;background:none;border:none;color:var(--muted);
+  font-size:10px;font-weight:600;font-family:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:6px;cursor:pointer;
+}
+.nav-item.active{color:#fff}
+.nav-item .ni{font-size:20px}
+
+.toast{
+  position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(20px);
+  background:#1c1c1e;border:1px solid rgba(255,255,255,0.12);
+  color:#fff;padding:12px 18px;border-radius:14px;font-size:13px;font-weight:600;
+  opacity:0;pointer-events:none;transition:all .25s;z-index:100;max-width:90%;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="header-left">
+      <div class="logo-mark">A</div>
+      <div class="brand-col">
+        <div class="brand-name">AEROCOMPILE</div>
+        <div class="brand-sub">by lilflox</div>
+      </div>
+    </div>
+    <div class="pill" id="userPill">—</div>
+  </header>
+
+  <div class="hero">
+    <div class="glow"></div>
+    <div class="hero-icon">⚙️</div>
+    <h1>Компилятор</h1>
+    <p>Pawn → .amx · JNI / NDK → .so<br>Premium и промокоды без лимитов</p>
+  </div>
+
+  <div class="section">
+    <div class="label">Сборка</div>
+    <div class="grid">
+      <button class="tile blue" data-action="compile_jni">
+        <span class="ico">🧩</span>
+        <div class="t">JNI (.so)</div>
+        <div class="s">NDK проект ZIP</div>
+      </button>
+      <button class="tile blue" data-action="compile_pawn">
+        <span class="ico">🎮</span>
+        <div class="t">Pawn (.amx)</div>
+        <div class="s">SA-MP / open.mp</div>
+      </button>
+      <button class="tile purple" data-action="premium">
+        <span class="ico">⭐</span>
+        <div class="t">Premium</div>
+        <div class="s">Stars · без лимита</div>
+      </button>
+      <button class="tile green" data-action="limit">
+        <span class="ico">📊</span>
+        <div class="t">Мой лимит</div>
+        <div class="s">компиляции / 24ч</div>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">Промокод Premium</div>
+    <div class="input-row">
+      <input id="promoInput" type="text" placeholder="Введи свой код" maxlength="32" autocomplete="off">
+      <button class="btn-ok" id="promoBtn">OK</button>
+    </div>
+    <p class="hint">Активирует Premium на часы или навсегда — код выдаёт админ</p>
+    <button class="mega" data-action="premium">Купить Premium за Stars</button>
+  </div>
+
+  <div class="card" style="margin-top:0">
+    <div class="label">Ещё</div>
+    <button class="list-btn" data-action="support"><span>💬 Поддержка</span><span class="arrow">›</span></button>
+    <button class="list-btn" data-action="help"><span>ℹ️ Как пользоваться</span><span class="arrow">›</span></button>
+    <button class="list-btn" data-action="close"><span>Закрыть</span><span class="arrow">›</span></button>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="nav-item active" data-action="home"><span class="ni">🏠</span>Главная</button>
+  <button class="nav-item" data-action="compile_pawn"><span class="ni">🎮</span>Pawn</button>
+  <button class="nav-item" data-action="compile_jni"><span class="ni">🧩</span>JNI</button>
+  <button class="nav-item" data-action="premium"><span class="ni">⭐</span>Premium</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg) {
+    tg.ready();
+    tg.expand();
+    try {
+      tg.setHeaderColor('#000000');
+      tg.setBackgroundColor('#000000');
+    } catch(e){}
+  }
+
+  var user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+  var pill = document.getElementById('userPill');
+  if (user) {
+    pill.textContent = user.username ? '@' + user.username : (user.first_name || 'User');
+  } else {
+    pill.textContent = 'Гость';
+  }
+
+  function toast(msg) {
+    var el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(function(){ el.classList.remove('show'); }, 2200);
+  }
+
+  function send(action, extra) {
+    extra = extra || {};
+    var payload = JSON.stringify(Object.assign({ action: action, ts: Date.now() }, extra));
+    if (tg && typeof tg.sendData === 'function') {
+      try {
+        tg.sendData(payload);
+        toast('Отправлено в бот');
+        try { tg.HapticFeedback && tg.HapticFeedback.impactOccurred('light'); } catch(e){}
+        return;
+      } catch (e) {}
+    }
+    toast('Открой Mini App из кнопки бота');
+  }
+
+  document.querySelectorAll('[data-action]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var a = el.getAttribute('data-action');
+      if (a === 'home') return;
+      if (a === 'close') { if (tg) tg.close(); return; }
+      send(a);
+    });
+  });
+
+  document.getElementById('promoBtn').addEventListener('click', function(){
+    var code = (document.getElementById('promoInput').value || '').trim();
+    if (!code) { toast('Введи промокод'); return; }
+    send('promo', { code: code });
+  });
+
+  document.getElementById('promoInput').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') document.getElementById('promoBtn').click();
+  });
+})();
+</script>
+</body>
+</html>
